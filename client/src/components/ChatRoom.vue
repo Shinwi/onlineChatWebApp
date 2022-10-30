@@ -1,31 +1,15 @@
 <template>
   <div>
-    <!-- <h4>chat room {{ roomCode }}</h4> -->
-    <!-- <h4>chat room {{ roomCode }}</h4>
-    <div class="usersList">
-        <div v-for="(user, idx) in this.usersInRoom" :key="user.userId">
-            <h4>User {{ idx + 1}}: {{ user.userName }}</h4>
-        </div>
-    </div> -->
-
-    <!-- styling the chat -->
     <div class="view chat">
         <header>
             <button class="logout">Disconnect</button>
-            <h1>Welcome, {{ userName }}</h1>
+            <div class="chat-room-info">
+                <h1>Welcome, {{ userName }}!</h1>
+                <h2>Room code: {{ roomCode }}</h2>
+            </div>
         </header>
         <section class="chat-box">
-            <div class="message">
-                <div class="message-inner">
-                    <div class="username">dino</div>
-                    <div class="content">this my text wasuup</div>
-                </div>
-            </div>
-            <div class="message current-user" id="addMess">
-                <!-- <div class="message-inner">
-                    <div class="username">dino</div>
-                    <div class="content" id="message-container"></div>
-                </div> -->
+            <div class="message" id="add-here">
             </div>
         </section>
         <footer>
@@ -61,15 +45,6 @@ export default {
     this.socket.on('receivedMessage', data => {
         this.displayReceiverMessage(data.receivedMessage)
     })
-
-    // getting the user name
-    // this.userName = this.usersInRoom.filter(u => u.userId === this.socket.id)
-    // console.log(this.usersInRoom)
-  },
-  computed () {
-    // isCurrentUser () {
-    //     // checks if the username belongs to the current user
-    // }
   },
   methods: {
     sendMessage () {
@@ -78,45 +53,29 @@ export default {
         this.socket.emit('sendMessage', {message: this.chatMessage, roomCode: this.roomCode})
         this.chatMessage = ''
     },
-    displaySenderMessage (message) {
-        // create message elemts
-        let messageElement = document.createElement('div')
-        // <!-- <div class="message-inner">
-        //             <div class="username">dino</div>
-        //             <div class="content" id="message-container"></div>
-        //         </div> -->
-
-        // let messageElement = document.createElement('p')
-        // messageElement.setAttribute('style', 'color:white;')
-        // let sender = this.usersInRoom.filter(u => u.userId === this.socket.id)
-        // messageElement.innerHTML = `${sender[0].userName}: ${message}`
-        // document.getElementById('message-container').appendChild(messageElement)
+    showMessageInChatBox (username, message, isCurrent) {
+        let messageDiv = `
+        <div class="message-inner ${isCurrent? 'current-user':''}">
+             <div class="username">${username}</div>
+             <div class="content">${message}</div>
+        </div>
+        `
+        // show the message div
+        document.getElementById('add-here').innerHTML += messageDiv
     },
-    // this will only work when there is only 2 people in the room
+    displaySenderMessage (message) {
+        let sender = this.usersInRoom.filter(u => u.userId === this.socket.id)
+        this.showMessageInChatBox(sender[0].userName, message, true)
+    },
     displayReceiverMessage (message) {
-        let messageElement = document.createElement('p')
-        messageElement.setAttribute('style', 'color:white;')
         let receiver = this.usersInRoom.filter(u => u.userId !== this.socket.id)
-        messageElement.innerHTML = `${receiver[0].userName}: ${message}`
-        document.getElementById('message-container').appendChild(messageElement)
+        this.showMessageInChatBox(receiver[0].userName, message, false)
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-.usersList {
-  border: thin solid rebeccapurple;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin: auto;
-  /*we can increase height here later??*/
-  /*this div can be container to the users names and profile pic??*/
-}
-
+<style>
 .view {
     display: flex;
 	justify-content: center;
@@ -132,7 +91,10 @@ header {
 	width: 100%;
     padding: 50px 30px 10px;
 }
-header > h1 {
+header > .chat-room-info {
+    display: flex;
+    justify-content: space-between;
+    width: 55%;
     color: white;
 }
 .logout {
@@ -159,7 +121,10 @@ header > h1 {
 }
 .chat-box > .message {
     display: flex;
-    margin-bottom: 15px;
+    flex-direction: column;
+}
+.message-inner {
+    margin-bottom: 0.5em;
 }
 .chat-box > .message > .message-inner > .username {
     color: #888;
@@ -190,9 +155,10 @@ header > h1 {
     max-width: 75%;
 }
 /* TODO: change the background color of the current user bubble */
-/* .chat-box > .message .current-user > .message-inner > .content {
+.chat-box > .message .current-user > .content {
    background-color: #ea526f;
-} */
+   color: white;
+} 
 
 /* styling the footer */
 footer {
