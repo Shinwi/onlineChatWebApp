@@ -8,8 +8,6 @@
             </div>
         </header>
         <section class="chat-box">
-            <div class="message" id="add-here">
-            </div>
             <div class="waiting" v-show="this.usersInRoom.length < 2">
                 <div style="margin-bottom:2rem;">
                     <h3>Waiting for other user to join room...</h3>
@@ -17,6 +15,8 @@
                 <div class="lds-ring">
                     <div></div>
                 </div>
+            </div>
+            <div class="message" id="add-here">
             </div>
         </section>
         <footer>
@@ -56,11 +56,6 @@ export default {
     sendMessage () {
         if (this.chatMessage.length === 0) {
             alert('Message cannot be empty!')
-            return
-        }
-
-        if (this.usersInRoom.length < 2) {
-            alert('User must join room before you can send messages')
             return
         }
         
@@ -103,7 +98,6 @@ export default {
 header {
     position: relative;
 	display: block;
-	width: 100%;
     padding: 50px 30px 10px;
 }
 header > .chat-room-info {
