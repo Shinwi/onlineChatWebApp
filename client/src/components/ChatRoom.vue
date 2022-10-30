@@ -58,7 +58,7 @@ export default {
             alert('Message cannot be empty!')
             return
         }
-        
+
         this.displaySenderMessage(this.chatMessage)
         this.socket.emit('sendMessage', {message: this.chatMessage, roomCode: this.roomCode})
         this.chatMessage = ''
@@ -86,6 +86,10 @@ export default {
 </script>
 
 <style>
+*{
+    margin: 0;
+    padding: 0;
+}
 .view {
     display: flex;
 	justify-content: center;
