@@ -12,8 +12,6 @@ io.on('connection', socket => {
 
     // creating a room and adding user to it
     socket.on('createRoom', (payload) => {
-        console.log('cret room')
-        console.log(payload)
         let roomCode = socket.id.slice(-6)
         let userName = payload.userName
         // registering the new player

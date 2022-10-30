@@ -2,7 +2,6 @@
   <div>
     <div class="view chat">
         <header>
-            <button class="logout">Disconnect</button>
             <div class="chat-room-info">
                 <h1>Welcome, {{ userName }}!</h1>
                 <h2>Room code: {{ roomCode }}</h2>
@@ -10,6 +9,14 @@
         </header>
         <section class="chat-box">
             <div class="message" id="add-here">
+            </div>
+            <div class="waiting" v-show="this.usersInRoom.length < 2">
+                <div style="margin-bottom:2rem;">
+                    <h3>Waiting for other user to join room...</h3>
+                </div>
+                <div class="lds-ring">
+                    <div></div>
+                </div>
             </div>
         </section>
         <footer>
@@ -34,10 +41,6 @@ export default {
     }
   },
   created () {
-    console.log('CHAT room')
-    console.log(this.socket)
-    console.log(this.userName)
-
     this.socket.on('roomInfoUpdate', data => {
         this.roomCode = data.roomCode
         this.usersInRoom = data.allUsersInRoom
@@ -47,8 +50,20 @@ export default {
     })
   },
   methods: {
+    disconnect () {
+        alert('disconnecting')
+    },
     sendMessage () {
-        if (this.chatMessage.length === 0) return
+        if (this.chatMessage.length === 0) {
+            alert('Message cannot be empty!')
+            return
+        }
+
+        if (this.usersInRoom.length < 2) {
+            alert('User must join room before you can send messages')
+            return
+        }
+        
         this.displaySenderMessage(this.chatMessage)
         this.socket.emit('sendMessage', {message: this.chatMessage, roomCode: this.roomCode})
         this.chatMessage = ''
@@ -80,7 +95,7 @@ export default {
     display: flex;
 	justify-content: center;
 	min-height: 100vh;
-	background-color: #ea526f;
+	background-color: #6952ea;
 }
 .chat {
     flex-direction: column;
@@ -112,6 +127,12 @@ header > .chat-room-info {
 }
 
 /* styling the chat box*/
+.waiting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3rem;
+}
 .view > .chat-box {
     border-radius: 24px 24px 0px 0px;
 	background-color: #FFF;
@@ -156,7 +177,7 @@ header > .chat-room-info {
 }
 /* TODO: change the background color of the current user bubble */
 .chat-box > .message .current-user > .content {
-   background-color: #ea526f;
+   background-color: #6952ea;
    color: white;
 } 
 
@@ -201,10 +222,45 @@ form > input[type="submit"] {
 	padding: 10px 15px;
 	border-radius: 0px 8px 8px 0px;
     /* TODO: change color to some other theme */
-	background-color: #ea526f;  
+	background-color: #6952ea;  
 	color: #FFF;
 	font-size: 18px;
 	font-weight: 700;
 }
+
+/**
+    half circle spinner to show while data is loading.
+    usage: 
+    <div class="lds-ring"></div>
+*/
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #6952ea;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #6952ea transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 </style>
 
