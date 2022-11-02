@@ -3,33 +3,23 @@
     <div v-if="isChatRoom">
       <chatRoom :socket="socket" :userName="userName"/>
     </div>
-    <div class="login-form" v-else>
-      <!-- <form class="form">
+    <div class="wrapper" v-else>
         <div>
-          <input type="text" v-model="userName" placeholder="Enter your name">
+          <h1>Chatt App</h1>
+          <p>Aji ndwiw!</p>
         </div>
+
         <div>
-          <input type="text" v-model="inviteRoomCode" placeholder="Join a game">
-          <button class="btn" :disabled="!inviteRoomCode.length || !userName.length" @click="joinRoom()">Join</button>
+          <form>
+            <input type="text" placeholder="Enter Username" v-model="userName">
+          </form>
+          <form @submit.prevent="joinRoom()">
+            <input type="text" placeholder="Enter Room Code" v-model="inviteRoomCode">
+            <input type="submit" value="Join">
+          </form>
         </div>
-        <button class="btn" :disabled="!userName.length"  @click="createRoom()">Create room</button>
-      </form>
-    </div> -->
-    <div class="wrapper">
-        <h1>Chatt App</h1>
-        <p>Have a chat!</p>
-        <form>
-          <input type="text" placeholder="Enter username" v-model="userName">
-          <input placeholder="Enter Code" v-model="inviteRoomCode">
-        </form>
-        <button class="btn" @click="joinRoom()">Join Chat</button>
-        <p class="or">
-          Dont have a code?
-        </p>
-        <div class="not-member">
-          <button class="btn" @click="createRoom()">Create Chatroom</button>
-        </div>
-      </div>
+
+        <button class="btn" @click="createRoom()">Create Chatroom</button>
     </div>
   </div>
 </template>
@@ -84,80 +74,40 @@ export default {
 
 
 <style scoped>
-/* * {
-  margin: 0;
-  padding: 0;
-}
-
-.login-form {
-  border: thin solid black;
-  display: flex;
-  justify-content: center;
-  margin-top: 7em;
-}
-
-form {
-  width: 500px;
-}
-@media only screen and (max-width: 600px) {
-  .login-form {
-    width: 450px;
-  }
-  form {
-    width: 350px;
-  }
-}
-.form input[type="text"] {
-  text-align: center;
-  width: 51%;
-  height: 60px;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border-radius: 10px;
-  border: none;
-  box-sizing: border-box;
-  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.8);
-
-  font-weight: bold;
-  font-size: large;
-
-  transition: 0.3s ease-in-out;
-} */
-
 *{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
-}
-body{
-  background: #dfe9f5;
-}
-.homePage {
-  border: thin solid violet;
-  width: 100vw;
-  height: 100vh;
+   background-color: #fff;
 }
 .wrapper{
-  border: thick solid green;
-  width: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 500px;
+  width: 400px;
   padding: 2rem 0 1rem 0;
   margin: 80px auto;
   background: #fff;
+  background-color: #fff ;
   border-radius: 10px;
   text-align: center;
-  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: -16px 25px 25px -7px rgba(0,0,0,0.75);
+  -webkit-box-shadow: -16px 25px 25px -7px rgba(0,0,0,0.75);
+  -moz-box-shadow: -16px 25px 25px -7px rgba(0,0,0,0.75);
 }
 h1{
   font-size: 2rem;
   color: #07001f;
 }
-p{
-  margin-bottom: 1.7rem;
+
+
+/*styling the form fields*/
+form {
+  display: flex;
 }
 form input{
-  width: 85%;
   outline: none;
   border: none;
   background: #dfe9f5;
@@ -165,11 +115,26 @@ form input{
   margin-bottom: 10px;
   border-radius: 10px;
 }
+form > input[type="submit"] {
+	appearance: none;
+	border: none;
+	outline: none;
+  background: none;
+	display: block;
+	padding: 10px 15px;
+	border-radius: 8px 8px 8px 0px;
+	background-color: #6952ea;  
+	color: #FFF;
+	font-size: 18px;
+	font-weight: 700;
+  cursor: pointer;
+}
+
+
 button{
   background:   #6952ea;
   color: #fff;
 }
-
 .btn {
   font-size: 1.1rem;
   margin-top: 1rem;
@@ -178,29 +143,7 @@ button{
   border: none;
   width: 85%;
   cursor: pointer;
-}
-.or{
-  margin-top: 1rem;
-}
-.icons i{
-  color: #07001f;
-  padding: 00.8rem 1.5rem;
-  border-radius: 10px;
-  margin-left: .9rem;
-  font-size: 1.5rem;
-  cursor: pointer;
-  border: 2px solid #dfe9f5;
-}
-.icons i:hover{
-  color: #fff !important;
-  background: #07001f;
-  transition: 1s;
-}
-.icons i:first-child{
-  color: green;
-}
-.icons i:last-child{
-  color: blue;
+  width: 100%;
 }
 </style>
 
