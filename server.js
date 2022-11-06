@@ -1,11 +1,22 @@
+// const http = require('http')
+const { Server } = require("socket.io");
+const port = process.env.PORT || 3000
 const {addUser, getUsersInRoom} = require('./users')
 
-// init the socketio connection
-const io = require('socket.io')(3000, {
+console.log('connected in port: ' + port)
+
+const io = new Server(port, { 
     cors: {
-        origin: ['http://localhost:8080', 'http://localhost:8081']
+        origin: ['https://randydandy.herokuapp.com/','http://localhost:8080', 'http://localhost:8081']
     }
 })
+// const io = require('socket.io')(port, {
+//     cors: {
+//         origin: ['https://randydandy.herokuapp.com/','http://localhost:8080', 'http://localhost:8081']
+//     }
+// })
+// console.log(io)
+console.log('socket io created???idk')
 
 io.on('connection', socket => {
     console.log(socket.id + ' just connected!')
