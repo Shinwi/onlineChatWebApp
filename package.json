@@ -2,17 +2,20 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
     "heroku-postbuild": "cd client && ./build.sh"
   },
   "keywords": [],
-  "author": "",
+  "author": "Oualid Ezz",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.3"
+  },
+  "engines": {
+    "npm": ">12.10.0"
   }
 }
