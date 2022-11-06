@@ -1,6 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "engines": {
+    "npm": "12.13.0"
+  },
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -14,8 +17,5 @@
   "devDependencies": {
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.3"
-  },
-  "engines": {
-    "npm": ">12.10.0"
   }
 }
