@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <div v-if="isChatRoom">
       <chatRoom :socket="socket" :userName="userName"/>
     </div>
@@ -49,6 +49,11 @@ export default {
     // connect and create get user socket id : roomCode
     this.socket.on('connect', () => {
       console.log('user id connected: ' + this.socket.id)
+    })
+  },
+  mounted () {
+    this.emitter.on('setChatRoomSceneToFalse', () => {
+      this.isChatRoom = false
     })
   },
   methods: {

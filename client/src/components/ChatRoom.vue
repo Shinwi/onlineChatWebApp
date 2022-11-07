@@ -47,9 +47,18 @@ export default {
     }),
     this.socket.on('receivedMessage', data => {
         this.displayReceiverMessage(data.receivedMessage)
+    }),
+    this.socket.on('roomFull', () => {
+        console.log('received room full action')
+        alert('Room is already full')
+        this.setChatRoomSceneToFalse()
+        
     })
   },
   methods: {
+    setChatRoomSceneToFalse () {
+        this.emitter.emit('setChatRoomSceneToFalse')
+    },
     disconnect () {
         alert('disconnecting')
     },

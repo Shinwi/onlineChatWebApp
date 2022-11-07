@@ -30,9 +30,17 @@ io.on('connection', socket => {
 
     // joining rooms
     socket.on('joinRoom', (payload) => {
+        
+        if (getUsersInRoom(payload.roomCode).length >= 2) {
+            console.log('room full: ' + payload.roomCode)
+            socket.emit('roomFull')
+            return
+        }
         console.log(payload)
         let roomCode = payload.roomCode
         let userName = payload.userName
+        // let roomCode = payload.roomCode
+        // let userName = payload.userName
         addUser(socket.id, userName, roomCode)
         socket.join(roomCode)
 
