@@ -43,7 +43,8 @@ export default {
   created () {
     // connecting to the server
     console.log('hello')
-    this.socket = io('https://randydandy.herokuapp.com/')
+    // this.socket = io('https://randydandy.herokuapp.com/')
+    this.socket = io('http://localhost:3000')
 
     // connect and create get user socket id : roomCode
     this.socket.on('connect', () => {
