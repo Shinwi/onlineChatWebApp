@@ -19,17 +19,21 @@
             <div class="message" id="add-here">
             </div>
         </section>
+        <EmojiPicker :show_emojis="showEmoji"/>
         <footer>
-            <form @submit.prevent="sendMessage()">
-                <input type="text" v-model="chatMessage" placeholder="Enter your message...">
-                <input type="submit" value="Send">
-            </form>
+            <div class="div-form">
+                <input type="text" class="messageInput"  @keyup.enter="sendMessage()" v-model="chatMessage" placeholder="Enter your message...">
+                <button class="submitButton" @click="sendMessage()">Send</button>
+                <button @click="showEmoji = !showEmoji">emoji</button>
+            </div>
         </footer>
     </div>
   </div>
 </template>
 
 <script>
+import EmojiPicker from './EmojiPicker/EmojiPicker.vue'
+
 export default {
   name: 'ChatRoom',
   props: ["socket", "userName"],
@@ -38,9 +42,19 @@ export default {
         roomCode: '',
         chatMessage:'',
         usersInRoom: [],
+        showEmoji: false
     }
   },
+  components: {
+    EmojiPicker
+  },
   created () {
+    this.emitter.on('emoji_click', (emoji) => {
+        console.log('received emoji')
+        console.log(emoji)
+        this.chatMessage += emoji
+
+    })
     this.socket.on('roomInfoUpdate', data => {
         this.roomCode = data.roomCode
         this.usersInRoom = data.allUsersInRoom
@@ -64,7 +78,7 @@ export default {
     },
     sendMessage () {
         if (this.chatMessage.length === 0) {
-            alert('Message cannot be empty!')
+           alert('Message cannot be empty!')
             return
         }
 
@@ -196,10 +210,10 @@ footer {
     padding: 30px;
 	box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
 }
-footer > form { 
+footer > .div-form {
     display: flex;
 }
-form > input[type="text"] {
+.messageInput{
     flex: 1 1 100%;
 
 	appearance: none;
@@ -220,7 +234,7 @@ form > input[type="text"] {
 
 	transition: 0.4s;
 }
-form > input[type="submit"] {
+.submitButton {
 	appearance: none;
 	border: none;
 	outline: none;
@@ -228,7 +242,6 @@ form > input[type="submit"] {
 	display: block;
 	padding: 10px 15px;
 	border-radius: 0px 8px 8px 0px;
-    /* TODO: change color to some other theme */
 	background-color: #6952ea;  
 	color: #FFF;
 	font-size: 18px;

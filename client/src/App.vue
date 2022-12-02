@@ -6,15 +6,15 @@
     <div class="wrapper" v-else>
         <div>
           <h1>Chatt App</h1>
-          <p>Aji ndwiw!</p>
+          <p>Let's talk!</p>
         </div>
 
         <div>
           <form>
-            <input type="text" placeholder="Enter Username" v-model="userName">
+            <input type="text" placeholder="Enter Username" v-model="userName" style="width:100%;">
           </form>
           <form @submit.prevent="joinRoom()">
-            <input type="text" placeholder="Enter Room Code" v-model="inviteRoomCode">
+            <input type="text" placeholder="Enter Room Code" v-model="inviteRoomCode"  style="width:85%;">
             <input type="submit" value="Join">
           </form>
         </div>
