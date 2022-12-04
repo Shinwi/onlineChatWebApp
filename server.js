@@ -1,5 +1,5 @@
 const port = process.env.PORT || 3000
-const {addUser, getUsersInRoom} = require('./users')
+const {addUser, getUsersInRoom, getUserInRoom, addAvatarToUser, getUsersAvatars} = require('./users')
 
 console.log('connected in port: ' + port)
 
@@ -51,5 +51,12 @@ io.on('connection', socket => {
     // sending messages in given chatroom
     socket.on('sendMessage', (payload) => {
         socket.to(payload.roomCode).emit('receivedMessage', {receivedMessage: payload.message})
+    })
+
+    // fired when the user avatar is loaded
+    socket.on('userAvatarLoaded', (payload) => {
+        addAvatarToUser(payload.userId, payload.userAvatar, payload.roomCode)
+        let allUsersAvatars = getUsersAvatars(payload.roomCode)
+        io.sockets.in(payload.roomCode).emit('usersAvatars', {allUsersAvatars: allUsersAvatars})
     })
 })
