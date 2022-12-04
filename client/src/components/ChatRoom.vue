@@ -1,10 +1,13 @@
 <template>
   <div>
     <div class="view chat">
-        <header>
+        <header class="chatroom-header">
             <div class="chat-room-info">
                 <h1>Welcome, {{ userName }}!</h1>
                 <h2>Room code: {{ roomCode }}</h2>
+            </div>
+            <div class="profile-picture">
+                <span v-if="userAvatar" v-html="userAvatar"></span>
             </div>
         </header>
         <section class="chat-box">
@@ -32,6 +35,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import EmojiPicker from './EmojiPicker/EmojiPicker.vue'
 
 export default {
@@ -42,7 +46,8 @@ export default {
         roomCode: '',
         chatMessage:'',
         usersInRoom: [],
-        showEmoji: false
+        showEmoji: false,
+        userAvatar: null
     }
   },
   components: {
@@ -69,7 +74,17 @@ export default {
         
     })
   },
+  mounted () {
+    this.getProfileAvatar()
+  },
   methods: {
+    async getProfileAvatar () {
+        if (!this.userName) {
+            console.log('No user name given')
+        }
+        let resp = await axios.get('https://api.multiavatar.com/' + JSON.stringify(this.userName))
+        this.userAvatar = resp.data ? resp.data : ''
+    },
     setChatRoomSceneToFalse () {
         this.emitter.emit('setChatRoomSceneToFalse')
     },
@@ -127,11 +142,23 @@ header {
 	display: block;
     padding: 50px 30px 10px;
 }
+.chatroom-header {
+    display: flex;
+    justify-content: space-between;
+}
 header > .chat-room-info {
     display: flex;
     justify-content: space-between;
     width: 55%;
     color: white;
+}
+header > .profile-picture {
+    border: thin solid black;
+    height: 40px;
+    width: 40px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
 }
 .logout {
     border: none;
