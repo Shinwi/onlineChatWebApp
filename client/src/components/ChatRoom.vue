@@ -47,7 +47,8 @@ export default {
         chatMessage:'',
         usersInRoom: [],
         showEmoji: false,
-        userAvatar: null
+        userAvatar: null,
+        otherUserAvatar: null,
     }
   },
   components: {
@@ -68,10 +69,13 @@ export default {
         this.displayReceiverMessage(data.receivedMessage)
     }),
     this.socket.on('roomFull', () => {
-        console.log('received room full action')
         alert('Room is already full')
         this.setChatRoomSceneToFalse()
         
+    }),
+    this.socket.on('usersAvatars', data => {
+        let otherUserId = Object.keys(data.allUsersAvatars).filter(k => k !== this.socket.id)
+        this.otherUserAvatar = data.allUsersAvatars[otherUserId]
     })
   },
   mounted () {
@@ -84,6 +88,7 @@ export default {
         }
         let resp = await axios.get('https://api.multiavatar.com/' + JSON.stringify(this.userName))
         this.userAvatar = resp.data ? resp.data : ''
+        this.socket.emit('userAvatarLoaded', {userAvatar: this.userAvatar, roomCode: this.roomCode, userId: this.socket.id})
     },
     setChatRoomSceneToFalse () {
         this.emitter.emit('setChatRoomSceneToFalse')
@@ -103,9 +108,14 @@ export default {
     },
     showMessageInChatBox (username, message, isCurrent) {
         let messageDiv = `
-        <div class="message-inner ${isCurrent? 'current-user':''}">
-             <div class="username">${username}</div>
-             <div class="content">${message}</div>
+        <div class="message-inner ${isCurrent? 'pull-right':''}">
+            <div class="profile-picture ${isCurrent? 'current-user':''}">
+                ${isCurrent ? this.userAvatar : this.otherUserAvatar}
+            </div>
+            <div class="message-column ${isCurrent? 'current-user':''}">
+                <div class="username">${username}</div>
+                <div class="content">${message}</div>
+            </div>
         </div>
         `
         // show the message div
@@ -152,7 +162,7 @@ header > .chat-room-info {
     width: 55%;
     color: white;
 }
-header > .profile-picture {
+.profile-picture {
     border: thin solid black;
     height: 40px;
     width: 40px;
@@ -194,15 +204,16 @@ header > .profile-picture {
 }
 .message-inner {
     margin-bottom: 0.5em;
+    display: flex;
 }
-.chat-box > .message > .message-inner > .username {
+.chat-box > .message > .message-inner > .message-column > .username {
     color: #888;
     font-size: 16px;
 	margin-bottom: 5px;
 	padding-left: 15px;
 	padding-right: 15px;
 }
-.chat-box > .message > .message-inner > .content {
+.content {
     display: inline-block;
 	padding: 10px 20px;
 	background-color: #F3F3F3;
@@ -217,8 +228,11 @@ header > .profile-picture {
 /* styling the current user */
 .current-user {
     margin-top: 30px;
-	justify-content: flex-end;
-	text-align: right;
+	/* justify-content: flex-end; */
+	/* text-align: right; */
+}
+.pull-right {
+    justify-content: flex-end;
 }
 .current-user > .message-inner {
     max-width: 75%;
