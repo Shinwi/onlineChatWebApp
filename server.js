@@ -59,4 +59,10 @@ io.on('connection', socket => {
         let allUsersAvatars = getUsersAvatars(payload.roomCode)
         io.sockets.in(payload.roomCode).emit('usersAvatars', {allUsersAvatars: allUsersAvatars})
     })
+
+    // fired when a user change their activity status
+    socket.on('activityStatusChange', (payload) => {
+        console.log(payload)
+        socket.to(payload.roomCode).emit('statusChange', {userId: payload.userId, status: payload.status})
+    })
 })
