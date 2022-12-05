@@ -6,8 +6,14 @@
                 <h1>Welcome, {{ userName }}!</h1>
                 <h2>Room code: {{ roomCode }}</h2>
             </div>
-            <div class="profile-picture">
-                <span v-if="userAvatar" v-html="userAvatar"></span>
+            <div>
+                <select id="activityStatus" name="activityStatus" v-model="activityStatus" @change="activityStatusChange()">
+                    <option>Active</option>
+                    <option>Away</option>
+                </select>
+                <div class="profile-picture">
+                    <span v-if="userAvatar" v-html="userAvatar"></span>
+                </div>
             </div>
         </header>
         <section class="chat-box">
@@ -20,6 +26,8 @@
                 </div>
             </div>
             <div class="message" id="add-here">
+                <div class="message-inner ${isCurrent? 'pull-right':''}">
+                </div>
             </div>
         </section>
         <EmojiPicker :show_emojis="showEmoji"/>
@@ -49,6 +57,9 @@ export default {
         showEmoji: false,
         userAvatar: null,
         otherUserAvatar: null,
+        activityStatus: 'Active',
+        userStatus: '',
+        otherUserStatus: ''
     }
   },
   components: {
@@ -77,11 +88,24 @@ export default {
         let otherUserId = Object.keys(data.allUsersAvatars).filter(k => k !== this.socket.id)
         this.otherUserAvatar = data.allUsersAvatars[otherUserId]
     })
+    this.socket.on('statusChange', data => {
+        console.log(data)
+        this.otherUserStatus = data.status === 'Active' ? `<div class="profile-activity-status"></div>` :  `<div class="profile-activity-status-away"></div>`
+    })
   },
   mounted () {
     this.getProfileAvatar()
+    console.log('first')
+    console.log(this.activityStatus)
   },
   methods: {
+    activityStatusChange () {
+        console.log(this.activityStatus)
+        this.userStatus = this.activityStatus === 'Active' ?  `<div class="profile-activity-status current-user"></div>` :  `<div class="profile-activity-status-away current-user"></div>`
+        console.log('th user status is:')
+        console.log(this.userStatus)
+        this.socket.emit('activityStatusChange', {userId: this.socket.id, status: this.activityStatus, roomCode: this.roomCode})
+    },
     async getProfileAvatar () {
         if (!this.userName) {
             console.log('No user name given')
@@ -107,8 +131,11 @@ export default {
         this.chatMessage = ''
     },
     showMessageInChatBox (username, message, isCurrent) {
+        console.log('dadadada')
+        console.log(this.userStatus)
         let messageDiv = `
         <div class="message-inner ${isCurrent? 'pull-right':''}">
+            ${isCurrent ? this.userStatus : this.otherUserStatus}
             <div class="profile-picture ${isCurrent? 'current-user':''}">
                 ${isCurrent ? this.userAvatar : this.otherUserAvatar}
             </div>
@@ -169,6 +196,22 @@ header > .chat-room-info {
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
+}
+.profile-activity-status {
+    border: thin solid black;
+    height: 10px;
+    width: 10px;
+    background-color: green;
+    border-radius: 50%;
+    display: inline-block;
+}
+.profile-activity-status-away {
+    border: thin solid black;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: gray;
 }
 .logout {
     border: none;
